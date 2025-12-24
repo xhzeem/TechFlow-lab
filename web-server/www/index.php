@@ -1,348 +1,292 @@
+<?php
+require_once 'config.php';
+
+$page = isset($_GET['page']) ? $_GET['page'] : 'home';
+$message = '';
+$error = '';
+
+// Handle login
+if (isset($_POST['login'])) {
+    $username = $_POST['username'];
+    $password = md5($_POST['password']);
+    
+    // Core logic remains the same (Vulnerable to SQLi)
+    $query = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
+    $result = getDB()->query($query);
+    
+    if ($result && $result->rowCount() > 0) {
+        $user = $result->fetch(PDO::FETCH_ASSOC);
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['role'] = $user['role'];
+        header("Location: index.php?page=dashboard");
+        exit();
+    } else {
+        $error = "Invalid unified credentials. Please verify your identity.";
+    }
+}
+
+// Handle logout
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header("Location: index.php");
+    exit();
+}
+
+// Handle registration
+if (isset($_POST['register'])) {
+    $username = $_POST['reg_username'];
+    $password = md5($_POST['reg_password']);
+    $email = $_POST['reg_email'];
+    
+    try {
+        $stmt = getDB()->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
+        $stmt->execute([$username, $password, $email]);
+        $message = "Registration synchronized. You may now authenticate.";
+    } catch(PDOException $e) {
+        $error = "Synchronization failed: " . $e->getMessage();
+    }
+}
+
+// Handle comment submission (Vulnerable to XSS)
+if (isset($_POST['add_comment']) && isset($_SESSION['user_id'])) {
+    $post_id = $_POST['post_id'];
+    $comment = $_POST['comment'];
+    
+    $stmt = getDB()->prepare("INSERT INTO comments (post_id, user_id, comment) VALUES (?, ?, ?)");
+    $stmt->execute([$post_id, $_SESSION['user_id'], $comment]);
+    $message = "Your contribution has been indexed.";
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VulnApp - Penetration Testing Lab</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            max-width: 1200px;
-            width: 100%;
-            overflow: hidden;
-        }
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
-        .header p { opacity: 0.9; }
-        .content { padding: 40px; }
-        .nav {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        .nav a {
-            padding: 10px 20px;
-            background: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-        .nav a:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
-        }
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        .form-group input:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        .btn {
-            padding: 12px 30px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        .btn:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-        }
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-        .post {
-            background: #f8f9fa;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            border-left: 4px solid #667eea;
-        }
-        .post h3 { color: #333; margin-bottom: 10px; }
-        .post-meta { color: #666; font-size: 0.9em; margin-bottom: 10px; }
-        .user-info {
-            background: #e9ecef;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table th, table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        table th {
-            background: #667eea;
-            color: white;
-        }
-        table tr:hover { background: #f8f9fa; }
-    </style>
+    <title>TechFlow Connect | Unified Workspace</title>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<!--
-Internal SSH Key - For maintenance access to internal-server-2
------BEGIN RSA PRIVATE KEY-----
-MIIEpAIBAAKCAQEAyFqVN8kL3vH5JxPZ8mKj9wX2nQ7RtYuP3lKm4vN8sW9xQzEr
-TnM2pL4kJ9vR6sX8wY3nT7mP5kL9vH2jQ8xR4tN6sP9wX5kL7vM3nQ9xY2tR8sP
------END RSA PRIVATE KEY-----
--->
-    <div class="container">
-        <div class="header">
-            <h1>🎯 VulnApp</h1>
-            <p>Vulnerable Web Application - Penetration Testing Lab</p>
-        </div>
-        <div class="content">
-            <?php
-            require_once 'config.php';
-            
-            $page = isset($_GET['page']) ? $_GET['page'] : 'home';
-            $message = '';
-            $error = '';
-            
-            // Handle login
-            if (isset($_POST['login'])) {
-                $username = $_POST['username'];
-                $password = md5($_POST['password']);
-                
-                // SQL Injection vulnerability - no prepared statements!
-                $query = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
-                $result = getDB()->query($query);
-                
-                if ($result && $result->rowCount() > 0) {
-                    $user = $result->fetch(PDO::FETCH_ASSOC);
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['username'] = $user['username'];
-                    $_SESSION['role'] = $user['role'];
-                    $message = "Welcome back, " . htmlspecialchars($user['username']) . "!";
-                } else {
-                    $error = "Invalid credentials!";
-                }
-            }
-            
-            // Handle logout
-            if (isset($_GET['logout'])) {
-                session_destroy();
-                header("Location: index.php");
-                exit();
-            }
-            
-            // Handle registration
-            if (isset($_POST['register'])) {
-                $username = $_POST['reg_username'];
-                $password = md5($_POST['reg_password']);
-                $email = $_POST['reg_email'];
-                
-                try {
-                    $stmt = getDB()->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
-                    $stmt->execute([$username, $password, $email]);
-                    $message = "Registration successful! You can now login.";
-                } catch(PDOException $e) {
-                    $error = "Registration failed: " . $e->getMessage();
-                }
-            }
-            
-            // Handle search - SQL Injection vulnerability
-            if (isset($_GET['search'])) {
-                $search = $_GET['search'];
-                // Vulnerable to SQL injection
-                $searchQuery = "SELECT * FROM posts WHERE title LIKE '%$search%' OR content LIKE '%$search%'";
-            }
-            
-            // Handle comment submission - Stored XSS vulnerability
-            if (isset($_POST['add_comment']) && isset($_SESSION['user_id'])) {
-                $post_id = $_POST['post_id'];
-                $comment = $_POST['comment']; // No sanitization!
-                
-                $stmt = getDB()->prepare("INSERT INTO comments (post_id, user_id, comment) VALUES (?, ?, ?)");
-                $stmt->execute([$post_id, $_SESSION['user_id'], $comment]);
-                $message = "Comment added!";
-            }
-            
-            if ($message) echo "<div class='alert alert-success'>$message</div>";
-            if ($error) echo "<div class='alert alert-error'>$error</div>";
-            ?>
-            
-            <div class="nav">
-                <a href="index.php?page=home">Home</a>
+    <nav id="navbar">
+        <div class="container nav-content">
+            <a href="index.php" class="logo">
+                <div class="logo-icon"></div>
+                TechFlow <span class="gradient-text">Connect</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.php?page=home" class="<?php echo $page == 'home' ? 'active' : ''; ?>">Solutions</a>
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="index.php?page=profile">Profile</a>
-                    <a href="index.php?page=posts">Posts</a>
-                    <a href="upload.php">Upload</a>
-                    <a href="view.php">File Viewer</a>
-                    <?php if ($_SESSION['role'] == 'admin'): ?>
-                        <a href="admin.php">Admin Panel</a>
-                    <?php endif; ?>
-                    <a href="index.php?logout=1">Logout</a>
+                    <a href="index.php?page=dashboard" class="<?php echo $page == 'dashboard' ? 'active' : ''; ?>">Dashboard</a>
+                    <a href="index.php?page=posts" class="<?php echo $page == 'posts' ? 'active' : ''; ?>">Knowledge</a>
+                    <a href="upload.php">Assets</a>
+                    <a href="view.php">Preview</a>
+                    <a href="index.php?logout=1" class="btn btn-glass" style="padding: 8px 16px;">Logout</a>
                 <?php else: ?>
-                    <a href="index.php?page=login">Login</a>
-                    <a href="index.php?page=register">Register</a>
+                    <a href="index.php?page=login" class="<?php echo $page == 'login' ? 'active' : ''; ?>">Sign In</a>
+                    <a href="index.php?page=register" class="btn btn-primary" style="padding: 8px 16px;">Get Started</a>
                 <?php endif; ?>
             </div>
-            
-            <?php
-            // Page routing
-            switch($page) {
-                case 'home':
-                    ?>
-                    <h2>Welcome to VulnApp</h2>
-                    <p>This is an intentionally vulnerable web application designed for penetration testing practice.</p>
-                    
-                    <div class="alert alert-info">
-                        <strong>🎯 Challenge:</strong> Find and exploit all vulnerabilities in this application!
+        </div>
+    </nav>
+
+    <?php if ($page == 'home' && !isset($_SESSION['user_id'])): ?>
+        <section class="hero animate-fade">
+            <div class="container">
+                <h1>The Future of <span class="gradient-text">Tech Flow</span> Is Here</h1>
+                <p>Collaborate, accelerate, and innovate with our unified workspace platform. Designed for high-performance teams that demand precision and speed.</p>
+                <div style="display: flex; gap: 20px; justify-content: center;">
+                    <a href="index.php?page=register" class="btn btn-primary">Start Free Trial</a>
+                    <a href="#features" class="btn btn-glass">View Solutions</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" style="padding: 100px 0;">
+            <div class="container">
+                <div style="text-align: center; margin-bottom: 60px;">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 16px;">Integrated Intelligence</h2>
+                    <p style="color: var(--text-dim);">A complete ecosystem for modern enterprise workflows.</p>
+                </div>
+                <div class="grid">
+                    <div class="card glass">
+                        <h3 style="margin-bottom: 10px;">Knowledge Index</h3>
+                        <p>Share insights across your entire organization with our lightning-fast internal wiki and documentation engine.</p>
                     </div>
-                    
-                    <h3>Features:</h3>
-                    <ul style="line-height: 2;">
-                        <li>User Authentication System</li>
-                        <li>Post Management</li>
-                        <li>File Upload Functionality</li>
-                        <li>Search Feature</li>
-                        <li>Admin Panel</li>
-                        <li>File Viewer</li>
-                    </ul>
-                    
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <div class="user-info">
-                            <strong>Logged in as:</strong> <?php echo htmlspecialchars($_SESSION['username']); ?> 
-                            (Role: <?php echo htmlspecialchars($_SESSION['role']); ?>)
-                        </div>
-                    <?php endif; ?>
-                    <?php
-                    break;
-                    
+                    <div class="card glass">
+                        <h3 style="margin-bottom: 10px;">Asset Repository</h3>
+                        <p>Securely store and share project files, designs, and technical specifications with granular access controls.</p>
+                    </div>
+                    <div class="card glass">
+                        <h3 style="margin-bottom: 10px;">Unified Identity</h3>
+                        <p>One identity, multiple services. Access all your TechFlow tools with a single, secure authentication layer.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    <?php else: ?>
+        <div class="container" style="padding-top: 140px;">
+            <?php if ($message) echo "<div class='alert alert-success'>$message</div>"; ?>
+            <?php if ($error) echo "<div class='alert alert-error'>$error</div>"; ?>
+
+            <?php
+            switch($page) {
                 case 'login':
-                    if (isset($_SESSION['user_id'])) {
-                        echo "<p>You are already logged in!</p>";
-                    } else {
-                        ?>
-                        <h2>Login</h2>
+                    ?>
+                    <div class="auth-container glass animate-fade">
+                        <h2 style="margin-bottom: 30px; text-align: center;">Enterprise Sign In</h2>
                         <form method="POST">
                             <div class="form-group">
-                                <label>Username:</label>
-                                <input type="text" name="username" required>
+                                <label>Unified ID / Username</label>
+                                <input type="text" name="username" required placeholder="e.g. admin">
                             </div>
                             <div class="form-group">
-                                <label>Password:</label>
+                                <label>Access Key / Password</label>
                                 <input type="password" name="password" required>
                             </div>
-                            <button type="submit" name="login" class="btn">Login</button>
+                            <button type="submit" name="login" class="btn btn-primary" style="width: 100%;">Authenticate</button>
                         </form>
+                    </div>
+                    <?php
+                    break;
+
+                case 'register':
+                    ?>
+                    <div class="auth-container glass animate-fade">
+                        <h2 style="margin-bottom: 30px; text-align: center;">Account Provisioning</h2>
+                        <form method="POST">
+                            <div class="form-group">
+                                <label>Preferred Username</label>
+                                <input type="text" name="reg_username" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Work Email Address</label>
+                                <input type="email" name="reg_email" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Establish Password</label>
+                                <input type="password" name="reg_password" required>
+                            </div>
+                            <button type="submit" name="register" class="btn btn-primary" style="width: 100%;">Create Account</button>
+                        </form>
+                    </div>
+                    <?php
+                    break;
+
+                case 'dashboard':
+                    if (!isset($_SESSION['user_id'])) { header("Location: index.php?page=login"); exit(); }
+                    ?>
+                    <div class="animate-fade">
+                        <h2 style="font-size: 2rem; margin-bottom: 10px;">Welcome back, <?php echo htmlspecialchars($_SESSION['username']); ?>.</h2>
+                        <p style="color: var(--text-dim);">Here's what's happening in your workspace today.</p>
+                        
+                        <div class="grid" style="margin-top: 40px;">
+                            <a href="index.php?page=posts" style="text-decoration: none;">
+                                <div class="card glass">
+                                    <h3 class="gradient-text">Browse Knowledge</h3>
+                                    <p>Read and contribute to internal technical documentation.</p>
+                                </div>
+                            </a>
+                            <a href="upload.php" style="text-decoration: none;">
+                                <div class="card glass">
+                                    <h3 class="gradient-text">Project Assets</h3>
+                                    <p>Manage shared resources and project deliverables.</p>
+                                </div>
+                            </a>
+                            <a href="index.php?page=profile" style="text-decoration: none;">
+                                <div class="card glass">
+                                    <h3 class="gradient-text">My Profile</h3>
+                                    <p>Update your professional identity and workspace preferences.</p>
+                                </div>
+                            </a>
+                        </div>
+
+                        <?php if ($_SESSION['role'] == 'admin'): ?>
+                            <div class="glass" style="margin-top: 50px; padding: 40px;">
+                                <h3 style="margin-bottom: 20px;">System Administrator Console</h3>
+                                <p style="margin-bottom: 20px; color: var(--text-dim);">Global configuration and user management utilities.</p>
+                                <a href="admin.php" class="btn btn-primary">Open Admin Panel</a>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Subtly hidden SSH key for internal-server-1 -->
+                        <div style="margin-top: 100px; opacity: 0.1;">
+                            <p style="font-size: 0.7rem;">DEBUG_MODE: EXT_AUTH_BRIDGE_ACTIVE</p>
+                            <!-- 
+                            Legacy Access Key - internal-server-1 maintenance
+                            -----BEGIN RSA PRIVATE KEY-----
+                            MIIEpAIBAAKCAQEAyFqVN8kL3vH5JxPZ8mKj9wX2nQ7RtYuP3lKm4vN8sW9xQzEr
+                            TnM2pL4kJ9vR6sX8wY3nT7mP5kL9vH2jQ8xR4tN6sP9wX5kL7vM3nQ9xY2tR8sP
+                            -----END RSA PRIVATE KEY-----
+                            -->
+                        </div>
+                    </div>
+                    <?php
+                    break;
+
+                case 'profile':
+                    if (!isset($_SESSION['user_id'])) { header("Location: index.php?page=login"); exit(); }
+                    // IDOR vulnerability
+                    $user_id = isset($_GET['id']) ? $_GET['id'] : $_SESSION['user_id'];
+                    $stmt = getDB()->prepare("SELECT * FROM users WHERE id = ?");
+                    $stmt->execute([$user_id]);
+                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    if ($user) {
+                        ?>
+                        <div class="glass animate-fade">
+                            <div class="profile-header">
+                                <div class="profile-avatar">
+                                    <?php echo strtoupper(substr($user['username'], 0, 1)); ?>
+                                </div>
+                                <div>
+                                    <h2 style="font-size: 2.5rem;"><?php echo htmlspecialchars($user['username']); ?></h2>
+                                    <p style="color: var(--primary); font-weight: 500;"><?php echo strtoupper($user['role']); ?> Specialist</p>
+                                </div>
+                            </div>
+                            <div style="padding: 0 40px 40px;">
+                                <div class="grid" style="grid-template-columns: 1fr 1fr;">
+                                    <div>
+                                        <label style="color: var(--text-dim); font-size: 0.9rem;">Email Address</label>
+                                        <p style="font-size: 1.1rem; margin-bottom: 20px;"><?php echo htmlspecialchars($user['email']); ?></p>
+                                        <label style="color: var(--text-dim); font-size: 0.9rem;">Identity Verified Since</label>
+                                        <p style="font-size: 1.1rem;"><?php echo date('F Y', strtotime($user['created_at'])); ?></p>
+                                    </div>
+                                    <div>
+                                        <label style="color: var(--text-dim); font-size: 0.9rem;">Security Clearance</label>
+                                        <p style="font-size: 1.1rem; margin-bottom: 20px;">Level <?php echo $user['role'] == 'admin' ? '4' : '2'; ?></p>
+                                        <label style="color: var(--text-dim); font-size: 0.9rem;">Network Status</label>
+                                        <p style="color: var(--primary);">Active</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <?php
                     }
                     break;
-                    
-                case 'register':
-                    ?>
-                    <h2>Register</h2>
-                    <form method="POST">
-                        <div class="form-group">
-                            <label>Username:</label>
-                            <input type="text" name="reg_username" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Password:</label>
-                            <input type="password" name="reg_password" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Email:</label>
-                            <input type="email" name="reg_email" required>
-                        </div>
-                        <button type="submit" name="register" class="btn">Register</button>
-                    </form>
-                    <?php
-                    break;
-                    
-                case 'profile':
-                    if (!isset($_SESSION['user_id'])) {
-                        echo "<p>Please login first!</p>";
-                    } else {
-                        // IDOR vulnerability - can view any user's profile
-                        $user_id = isset($_GET['id']) ? $_GET['id'] : $_SESSION['user_id'];
-                        
-                        $stmt = getDB()->prepare("SELECT * FROM users WHERE id = ?");
-                        $stmt->execute([$user_id]);
-                        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                        
-                        if ($user) {
-                            ?>
-                            <h2>User Profile</h2>
-                            <div class="user-info">
-                                <p><strong>Username:</strong> <?php echo htmlspecialchars($user['username']); ?></p>
-                                <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
-                                <p><strong>Role:</strong> <?php echo htmlspecialchars($user['role']); ?></p>
-                                <p><strong>Member since:</strong> <?php echo htmlspecialchars($user['created_at']); ?></p>
-                            </div>
-                            <?php
-                        }
-                    }
-                    break;
-                    
+
                 case 'posts':
-                    if (!isset($_SESSION['user_id'])) {
-                        echo "<p>Please login first!</p>";
-                    } else {
-                        ?>
-                        <h2>Posts</h2>
-                        
-                        <!-- Search form - SQL Injection -->
-                        <form method="GET" style="margin-bottom: 20px;">
-                            <input type="hidden" name="page" value="posts">
-                            <div class="form-group">
-                                <label>Search Posts:</label>
-                                <input type="text" name="search" placeholder="Search...">
+                    if (!isset($_SESSION['user_id'])) { header("Location: index.php?page=login"); exit(); }
+                    ?>
+                    <div class="animate-fade">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
+                            <div>
+                                <h1 style="font-size: 2.5rem; margin-bottom: 10px;">Knowledge Base</h1>
+                                <p style="color: var(--text-dim);">Searchable repository for technical insights and project documentation.</p>
                             </div>
-                            <button type="submit" class="btn">Search</button>
-                        </form>
-                        
+                            <form method="GET" style="display: flex; gap: 10px;">
+                                <input type="hidden" name="page" value="posts">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <input type="text" name="search" placeholder="Query documentation..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </form>
+                        </div>
+
                         <?php
                         if (isset($_GET['search'])) {
                             $search = $_GET['search'];
+                            // Vulnerable to SQLi
                             $query = "SELECT posts.*, users.username FROM posts JOIN users ON posts.user_id = users.id WHERE title LIKE '%$search%' OR content LIKE '%$search%'";
                         } else {
                             $query = "SELECT posts.*, users.username FROM posts JOIN users ON posts.user_id = users.id WHERE is_private = 0";
@@ -350,49 +294,77 @@ TnM2pL4kJ9vR6sX8wY3nT7mP5kL9vH2jQ8xR4tN6sP9wX5kL7vM3nQ9xY2tR8sP
                         
                         $posts = getDB()->query($query);
                         
-                        foreach ($posts as $post) {
-                            ?>
-                            <div class="post">
-                                <h3><?php echo htmlspecialchars($post['title']); ?></h3>
-                                <div class="post-meta">
-                                    By <?php echo htmlspecialchars($post['username']); ?> on <?php echo htmlspecialchars($post['created_at']); ?>
-                                </div>
-                                <p><?php echo htmlspecialchars($post['content']); ?></p>
-                                
-                                <!-- Comments section -->
-                                <h4 style="margin-top: 15px;">Comments:</h4>
-                                <?php
-                                $stmt = getDB()->prepare("SELECT comments.*, users.username FROM comments JOIN users ON comments.user_id = users.id WHERE post_id = ?");
-                                $stmt->execute([$post['id']]);
-                                $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                
-                                foreach ($comments as $comment) {
-                                    // XSS vulnerability - no output encoding!
-                                    echo "<div style='background: white; padding: 10px; margin: 5px 0; border-radius: 3px;'>";
-                                    echo "<strong>" . htmlspecialchars($comment['username']) . ":</strong> ";
-                                    echo $comment['comment']; // XSS here!
-                                    echo "</div>";
-                                }
+                        if ($posts) {
+                            foreach ($posts as $post) {
                                 ?>
-                                
-                                <!-- Add comment form -->
-                                <form method="POST" style="margin-top: 10px;">
-                                    <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
-                                    <div class="form-group">
-                                        <input type="text" name="comment" placeholder="Add a comment..." required>
+                                <div class="card glass" style="margin-bottom: 30px;">
+                                    <div class="card-meta">BY <?php echo strtoupper(htmlspecialchars($post['username'])); ?> • <?php echo date('M d, Y', strtotime($post['created_at'])); ?></div>
+                                    <h3 style="font-size: 1.5rem;"><?php echo htmlspecialchars($post['title']); ?></h3>
+                                    <p><?php echo htmlspecialchars($post['content']); ?></p>
+                                    
+                                    <div class="comments-section">
+                                        <h4 style="margin-bottom: 15px; font-size: 1rem; color: var(--text-dim);">Collaborator Contributions</h4>
+                                        <?php
+                                        $stmt = getDB()->prepare("SELECT comments.*, users.username FROM comments JOIN users ON comments.user_id = users.id WHERE post_id = ?");
+                                        $stmt->execute([$post['id']]);
+                                        $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                        
+                                        foreach ($comments as $comment) {
+                                            // Vulnerable to Stored XSS
+                                            echo "<div class='comment'>";
+                                            echo "<div class='comment-user'>" . htmlspecialchars($comment['username']) . "</div>";
+                                            echo "<div>" . $comment['comment'] . "</div>";
+                                            echo "</div>";
+                                        }
+                                        ?>
+                                        
+                                        <form method="POST" style="margin-top: 20px; display: flex; gap: 15px;">
+                                            <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
+                                            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                                <input type="text" name="comment" placeholder="Add technical insight..." required>
+                                            </div>
+                                            <button type="submit" name="add_comment" class="btn btn-glass" style="padding: 12px 20px;">Post</button>
+                                        </form>
                                     </div>
-                                    <button type="submit" name="add_comment" class="btn">Comment</button>
-                                </form>
-                            </div>
-                            <?php
+                                </div>
+                                <?php
+                            }
                         }
                         ?>
-                        <?php
-                    }
+                    </div>
+                    <?php
                     break;
             }
             ?>
         </div>
-    </div>
+    <?php endif; ?>
+
+    <footer id="footer">
+        <div class="container footer-content">
+            <a href="index.php" class="logo" style="justify-content: center; margin-bottom: 20px;">
+                <div class="logo-icon"></div>
+                TechFlow <span class="gradient-text">Connect</span>
+            </a>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">© 2024 TechFlow Connect Corporation. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Unified Security</a>
+                <a href="#">Contact Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+    </script>
 </body>
 </html>
+
