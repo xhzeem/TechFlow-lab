@@ -214,10 +214,33 @@ if (isset($_POST['add_comment']) && isset($_SESSION['user_id'])) {
                             <p style="font-size: 0.7rem;">DEBUG_MODE: EXT_AUTH_BRIDGE_ACTIVE</p>
                             <!-- 
                             Legacy Access Key - internal-server-1 maintenance
-                            -----BEGIN RSA PRIVATE KEY-----
-                            MIIEpAIBAAKCAQEAyFqVN8kL3vH5JxPZ8mKj9wX2nQ7RtYuP3lKm4vN8sW9xQzEr
-                            TnM2pL4kJ9vR6sX8wY3nT7mP5kL9vH2jQ8xR4tN6sP9wX5kL7vM3nQ9xY2tR8sP
-                            -----END RSA PRIVATE KEY-----
+                            -----BEGIN OPENSSH PRIVATE KEY-----
+                            b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABFwAAAAdzc2gtcn
+                            NhAAAAAwEAAQAAAQEAmQpAxHEFkKBE0OOQsciHn4/RLeg2ZK3DjcnA+AlnCjnCtEOUkAzn
+                            kp6YUAXJw2P/nsTE7v0BoUtT9/mDXQJfAA76r/OP+0rHHzjjT2e8mQZfzPaydrSqUwDAGi
+                            hfFDaTYCkUl16cHh+sv53XXPh5kkDqT2jzFQNi8FZHC91VcZXUABIq71UdmzYEoAgiqDkn
+                            M0xcPcpiVK2xSqNMLvuAsJC5s23JBCeJ4mVINJheyCDk6Zgt8FKy0S2zsytoVo/cw6rcWb
+                            W8N2U+pT9vWCIFuzQzNw0L+NjnDpt2ZqOX+8+S1eL4ZFbpFe2JFhu4rRSGy0RA1bbwiOYS
+                            M9dpQTtGGQAAA9D6zD6M+sw+jAAAAAdzc2gtcnNhAAABAQCZCkDEcQWQoETQ45CxyIefj9
+                            Et6DZkrcONycD4CWcKOcK0Q5SQDOeSnphQBcnDY/+exMTu/QGhS1P3+YNdAl8ADvqv84/7
+                            SscfOONPZ7yZBl/M9rJ2tKpTAMAaKF8UNpNgKRSXXpweH6y/nddc+HmSQOpPaPMVA2LwVk
+                            cL3VVxldQAEirvVR2bNgSgCCKoOSczTFw9ymJUrbFKo0wu+4CwkLmzbckEJ4niZUg0mF7I
+                            IOTpmC3wUrLRLbOzK2hWj9zDqtxZtbw3ZT6lP29YIgW7NDM3DQv42OcOm3Zmo5f7z5LV4v
+                            hkVukV7YkWG7itFIbLREDVtvCI5hIz12lBO0YZAAAAAwEAAQAAAP9cD87mXRb76W18O2jP
+                            idIMKnerJgWSivUYVkW+7+kMPbLivcSg4yJrEPyPJuw4ne8nkzbkjU5tuOLKSU68pLCBWI
+                            F1Vw9GG7WtEourOLw7UZpPshepUQUk6U6mbaLEhhAhyJSaek9vz54bptfnFZIMaQCKxJd2
+                            DJN4AG68tGix6oCZcbeDGmr34r+y34rC3UY55O1ckwmOxJbfDxaQOUBeUC1wSd7quWlsdh
+                            dEvqKjxBwpLASRsHH3IalsdtqOFHoZhjKgFtaf/5ua8ZOraNZ7pVf+ajPz6J0qX+2+p131
+                            683D9o7pCYyLTdzVVQH+BF6Ug1BMAEH8pt/Y7HGxqAEAAACBALJXNouo9zI/j8A5K3NAPI
+                            g0Ky3FVHo1NPbdnaNmfChV74p/oQ+cbyNfO6CrnvsUbSqxMczEW5YEul//NFRdLF+0/PnI
+                            YIizG+Z9FxWE8NUL259sy8qwTmabUB4Krrq2TJPt/F/X6SmyXU/D8ij6kxx0F/SVtSC0z8
+                            ma3pftng+vAAAAgQDXppdVjPk6X0/zTGVWH/hs2WY8/UGVb1MVoIcGyo/CPF8/1Z598BOJ
+                            zqck68wYG5BL17Hql6Fv5gs5P57VNOC+ahl78X7hVPl5PsKo7zK2FhKJC9mPbQpSIxGdi/
+                            1GaECvoR2hGCFUjAK5nl0fDrIcQKX2AM18k1J0tJBlBqKpgQAAAIEAtayvgK12mfjmibSu
+                            CPvw4G86pXnh50YX3sH3xFuXRcgIrCYtiD5PTEx5IGin3U7OhT5QWwy2OYTGAdcUbN2jbd
+                            fnUtwZ0wxAKcyitMRi1M+MV6adjI7yNgskSbHJCryjOisvMUY7d0/6wfDFg3gb/yi8ZBU4
+                            UruLiLgh9edP+JkAAAAVeGh6ZWVtQHhNYWNib29rLmxvY2FsAQIDBAUG
+                            -----END OPENSSH PRIVATE KEY-----
                             -->
                         </div>
                     </div>

@@ -51,7 +51,7 @@ A comprehensive Docker-based penetration testing lab featuring vulnerable web ap
 ### 1. Clone or Navigate to Lab Directory
 
 ```bash
-cd /Users/xhzeem/Desktop/TechFlow
+cd /Users/user/Desktop/TechFlow
 ```
 
 ### 2. Start the Lab
