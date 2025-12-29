@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM eclipse-temurin:8-jdk
 
 # Install Go, Tomcat dependencies, and other vulnerable services
 RUN echo 'Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries && \
@@ -6,7 +6,7 @@ RUN echo 'Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --fix-missing \
     wget \
     curl \
-    openjdk-11-jdk \
+    # openjdk-11-jdk provided by base \
     golang-go \
     proftpd-basic \
     default-mysql-server \

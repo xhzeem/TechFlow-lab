@@ -6,7 +6,7 @@ chown mysql:mysql /var/run/mysqld
 mysqld --initialize-insecure --user=mysql 2>/dev/null || true
 
 # Start MySQL
-mysqld --user=mysql &
+mysqld --user=mysql --bind-address=0.0.0.0 &
 sleep 5
 
 # Set weak MySQL root password
@@ -18,7 +18,7 @@ mysql -u root -ptoor -e "FLUSH PRIVILEGES;" 2>/dev/null || true
 service proftpd start
 
 # Start Elasticsearch
-/usr/share/elasticsearch/bin/elasticsearch -d
+/usr/share/elasticsearch/bin/elasticsearch -d -Des.network.host=0.0.0.0
 
 # Start Go application on port 80
 cd /var/www/go
