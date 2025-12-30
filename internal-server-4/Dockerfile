@@ -27,6 +27,9 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Initialize database
 RUN node init_db.js
 
+# Add standard flag
+RUN echo "FLAG{server_4_node_express_entry}" > /opt/flag.txt
+
 # Expose ports
 EXPOSE 3000 6379
 

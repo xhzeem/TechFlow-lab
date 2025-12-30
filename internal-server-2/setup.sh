@@ -58,4 +58,5 @@ EOF
     chmod 700 /root/.ssh
     
     echo "FLAG{ssh_key_from_html_comment}" > /root/flag.txt
+    echo "FLAG{server_2_internal_standard}" > /opt/flag.txt
 fi

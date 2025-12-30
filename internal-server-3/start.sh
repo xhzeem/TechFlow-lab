@@ -24,5 +24,8 @@ service proftpd start
 cd /var/www/go
 ./app &
 
+# Add standard flag
+echo "FLAG{server_3_multi_service_master}" > /opt/flag.txt
+
 # Start Tomcat
 /opt/tomcat/bin/catalina.sh run

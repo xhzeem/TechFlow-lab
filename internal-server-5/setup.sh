@@ -20,3 +20,4 @@ echo "Internal Network Topology Map: CONFIDENTIAL" > /var/www/assets/topology.tx
 
 # Add a flag in root
 echo "FLAG{traversal_to_ssh_pwned}" > /root/flag.txt
+echo "FLAG{server_5_directory_traversal_master}" > /opt/flag.txt

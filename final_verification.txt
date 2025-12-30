@@ -1,0 +1,37 @@
+=== Lab Verification Report ===
+Generated at: Tue Dec 30 13:02:59 +03 2025
+
+--- 1. Container Status ---
+NAMES       STATUS          PORTS
+server-6    Up 15 seconds   0.0.0.0:8081->80/tcp, [::]:8081->80/tcp
+server-db   Up 15 seconds   3306/tcp, 33060/tcp
+server-2    Up 15 seconds   21-22/tcp, 80/tcp, 139/tcp, 445/tcp, 6379/tcp
+server-3    Up 15 seconds   21/tcp, 80/tcp, 3306/tcp, 8009/tcp, 8080/tcp, 9200/tcp
+server-7    Up 15 seconds   0.0.0.0:21000-21010->21000-21010/tcp, [::]:21000-21010->21000-21010/tcp, 0.0.0.0:2121->21/tcp, [::]:2121->21/tcp
+server-1    Up 15 seconds   22/tcp, 80/tcp, 11211/tcp
+server-5    Up 15 seconds   22/tcp, 80/tcp
+server-4    Up 15 seconds   3000/tcp, 6379/tcp
+
+--- 2. Flag Verification (/opt/flag.txt) ---
+server-1: FLAG{server_1_root_access}
+server-2: FLAG{server_2_internal_standard}
+server-3: FLAG{server_3_multi_service_master}
+server-4: FLAG{server_4_node_express_entry}
+server-5: FLAG{server_5_directory_traversal_master}
+server-6: FLAG{web_server_entry_point}
+server-7: FLAG{server_7_ftp_standard}
+server-db: FAILED (MySQL Base)
+
+--- 3. Service Reachability Check ---
+Check server-1 (22, 80):
+Check server-2 (80, 445):
+Check server-3 (80, 3306, 9200):
+Check server-4 (3000, 6379):
+Check server-5 (22, 80):
+
+--- 4. Vulnerability Sanity Check ---
+Server 2 RCE (Perl): WORKING
+Server 3 RCE (Go): WORKING
+Server 5 Traversal: WORKING
+
+=== Verification Done ===

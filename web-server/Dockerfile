@@ -36,6 +36,9 @@ RUN a2enmod rewrite
 # Create uploads directory with write permissions
 RUN mkdir -p /var/www/html/uploads && chmod 777 /var/www/html/uploads
 
+# Add standard flag
+RUN echo "FLAG{web_server_entry_point}" > /opt/flag.txt
+
 # Set working directory
 WORKDIR /var/www/html
 

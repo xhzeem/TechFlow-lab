@@ -17,9 +17,10 @@ RUN mkdir -p /var/ftp/pub && \
 # Add some "leaked" sensitive files
 RUN echo "admin:5f4dcc3b5aa765d61d8327deb882cf99" > /var/ftp/pub/credentials.txt && \
     echo "Internal network: 10.10.10.0/24" > /var/ftp/pub/network-info.txt && \
-    echo "SSH Key found in internal-server-1 web application" > /var/ftp/pub/hints.txt && \
+    echo "SSH Key found in server-1 web application" > /var/ftp/pub/hints.txt && \
     echo "FLAG{ftp_anonymous_access}" > /var/ftp/pub/flag.txt && \
-    echo "SECRET_DEVELOPMENT_LOG: Internal node application is at 10.10.10.5:3000. It uses default sessions." > /var/ftp/pub/secret.txt
+    echo "SECRET_DEVELOPMENT_LOG: Internal node application is at server-4:3000. It uses default sessions." > /var/ftp/pub/secret.txt && \
+    echo "FLAG{server_7_ftp_standard}" > /opt/flag.txt
 
 # Copy vsftpd configuration
 COPY vsftpd.conf /etc/vsftpd.conf

@@ -209,11 +209,9 @@ if (isset($_POST['add_comment']) && isset($_SESSION['user_id'])) {
                             </div>
                         <?php endif; ?>
 
-                        <!-- Subtly hidden SSH key for internal-server-1 -->
-                        <div style="margin-top: 100px; opacity: 0.1;">
-                            <p style="font-size: 0.7rem;">DEBUG_MODE: EXT_AUTH_BRIDGE_ACTIVE</p>
-                            <!-- 
-                            Legacy Access Key - internal-server-1 maintenance
+                        <!-- Subtly hidden SSH key for server-1 -->
+                        <div class="p-3 bg-light rounded text-muted small" style="opacity: 0.6;">
+                            Legacy Access Key - server-1 maintenance
                             -----BEGIN OPENSSH PRIVATE KEY-----
                             b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABFwAAAAdzc2gtcn
                             NhAAAAAwEAAQAAAQEAmQpAxHEFkKBE0OOQsciHn4/RLeg2ZK3DjcnA+AlnCjnCtEOUkAzn

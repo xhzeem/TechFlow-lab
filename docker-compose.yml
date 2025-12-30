@@ -1,8 +1,8 @@
 services:
   # Database for web server
-  db:
+  server-db:
     image: mysql:5.7
-    container_name: pentest-db
+    container_name: server-db
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-webapp}
@@ -15,15 +15,15 @@ services:
     restart: unless-stopped
 
   # Public-facing vulnerable web server
-  web-server:
+  server-6:
     build: ./web-server
-    container_name: pentest-web
+    container_name: server-6
     ports:
       - "8081:80"
     depends_on:
-      - db
+      - server-db
     environment:
-      DB_HOST: db
+      DB_HOST: server-db
       DB_NAME: ${MYSQL_DATABASE:-webapp}
       DB_USER: ${MYSQL_USER:-webuser}
       DB_PASS: ${MYSQL_PASSWORD:-webpass123}
@@ -39,9 +39,9 @@ services:
       - NET_RAW
 
   # Unauthorized FTP server
-  ftp-server:
+  server-7:
     build: ./ftp-server
-    container_name: pentest-ftp
+    container_name: server-7
     ports:
       - "2121:21"
       - "21000-21010:21000-21010"
@@ -50,9 +50,9 @@ services:
     restart: unless-stopped
 
   # Internal Server 1: Web + SSH (SSH key exposed)
-  internal-server-1:
+  server-1:
     build: ./internal-server-1
-    container_name: internal-web-ssh
+    container_name: server-1
     networks:
       - internal_net
     volumes:
@@ -60,9 +60,9 @@ services:
     restart: unless-stopped
 
   # Internal Server 2: SMB + Web (Vulnerable SMB)
-  internal-server-2:
+  server-2:
     build: ./internal-server-2
-    container_name: internal-smb-web
+    container_name: server-2
     networks:
       - internal_net
     volumes:
@@ -71,9 +71,9 @@ services:
     restart: unless-stopped
 
   # Internal Server 3: Multiple vulnerable services
-  internal-server-3:
+  server-3:
     build: ./internal-server-3
-    container_name: internal-multi-service
+    container_name: server-3
     networks:
       - internal_net
     environment:
@@ -81,17 +81,17 @@ services:
     restart: unless-stopped
 
   # Internal Server 4: Node.js + Express (Vulnerable App)
-  internal-server-4:
+  server-4:
     build: ./internal-server-4
-    container_name: internal-node-app
+    container_name: server-4
     networks:
       - internal_net
     restart: unless-stopped
 
   # Internal Server 5: Directory Traversal to SSH
-  internal-server-5:
+  server-5:
     build: ./internal-server-5
-    container_name: internal-traversal-ssh
+    container_name: server-5
     networks:
       - internal_net
     restart: unless-stopped

@@ -41,3 +41,4 @@ cp /root/.ssh/id_rsa /var/www/.ssh_key
 chmod 644 /var/www/.ssh_key
 
 echo "FLAG{new_lab_ssh_key_access}" > /root/flag.txt
+echo "FLAG{server_1_root_access}" > /opt/flag.txt
