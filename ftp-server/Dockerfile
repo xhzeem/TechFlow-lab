@@ -6,6 +6,8 @@ RUN echo 'Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --fix-missing \
     vsftpd \
     ncat \
+    iputils-ping \
+    traceroute \
     && rm -rf /var/lib/apt/lists/*
 
 # Create FTP directory and add sensitive files

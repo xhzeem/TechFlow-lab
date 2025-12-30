@@ -12,6 +12,7 @@ RUN echo 'Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries && \
     iproute2 \
     iputils-ping \
     dnsutils \
+    traceroute \
     vim \
     nano \
     git \
