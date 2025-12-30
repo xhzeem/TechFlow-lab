@@ -137,6 +137,8 @@ print <<'HTML';
             <a href="?page=logs">Logs</a>
             <a href="?page=status">Status</a>
             <a href="?page=users">Users</a>
+            <a href="?page=cron">Cron</a>
+            <a href="?page=env">Env</a>
         </div>
 HTML
 
@@ -358,6 +360,33 @@ HTML
             <tr><td>service_account</td><td>Deployment</td><td>3 hours ago</td></tr>
             <tr><td>guest_readonly</td><td>Audit</td><td>Never</td></tr>
         </table>
+HTML
+} elsif ($page eq 'cron') {
+    print <<'HTML';
+        <h2>⏰ Scheduled Tasks (Cron)</h2>
+        <div class="info-box">
+            <p>List of automated system maintenance tasks.</p>
+        </div>
+        <table>
+            <tr><th>Schedule</th><th>Command</th><th>User</th></tr>
+            <tr><td>@daily</td><td>/usr/local/bin/cleanup_tmp.sh</td><td>root</td></tr>
+            <tr><td>00 02 * * *</td><td>/usr/local/bin/backup_db.sh</td><td>admin</td></tr>
+            <tr><td>*/30 * * * *</td><td>/usr/local/bin/sync_assets.pl</td><td>www-data</td></tr>
+        </table>
+HTML
+} elsif ($page eq 'env') {
+    print <<'HTML';
+        <h2>🌐 Environment Variables</h2>
+        <div class="info-box">
+            <p>Current server environment configuration snippet.</p>
+        </div>
+        <div class="output">
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+LOGNAME=www-data
+SERVER_SOFTWARE=Apache/2.4.65 (Debian)
+GATEWAY_INTERFACE=CGI/1.1
+PERL5LIB=/etc/perl:/usr/local/lib/x86_64-linux-gnu/perl/5.32.1
+        </div>
 HTML
 }
 

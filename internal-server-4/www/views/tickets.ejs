@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Support Tickets - Admin Portal</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+
+        .nav {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .nav a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .nav a:hover {
+            color: #2563eb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .status-open {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        .status-resolved {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .status-inprogress {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            color: #6366f1;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎫 Support Tickets</h1>
+        <div class="nav">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/profile/<%= user.id %>">My Profile</a>
+            <a href="/notes">Notes</a>
+            <a href="/tickets">Tickets</a>
+            <a href="/logout">Logout</a>
+        </div>
+
+        <p>Manage and track internal support requests.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% tickets.forEach(ticket=> { %>
+                    <tr>
+                        <td>
+                            <%= ticket.id %>
+                        </td>
+                        <td>
+                            <%= ticket.subject %>
+                        </td>
+                        <td>
+                            <span class="status-<%= ticket.status.toLowerCase().replace(' ', '') %>">
+                                <%= ticket.status %>
+                            </span>
+                        </td>
+                        <td>
+                            <%= ticket.priority %>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

@@ -166,6 +166,16 @@ app.get('/notes', isAuthenticated, async (req, res) => {
     }
 });
 
+app.get('/tickets', isAuthenticated, (req, res) => {
+    const tickets = [
+        { id: 'TKT-101', subject: 'Server slowness in internal-net', status: 'Open', priority: 'High' },
+        { id: 'TKT-102', subject: 'Printer access in Room 302', status: 'Resolved', priority: 'Low' },
+        { id: 'TKT-103', subject: 'New employee onboarding - Alice', status: 'In Progress', priority: 'Medium' },
+        { id: 'TKT-104', subject: 'Database migration planning', status: 'Pending', priority: 'Medium' }
+    ];
+    res.render('tickets', { tickets, user: req.session.user });
+});
+
 app.post('/notes/add', isAuthenticated, async (req, res) => {
     const { content } = req.body;
     const id = Date.now();

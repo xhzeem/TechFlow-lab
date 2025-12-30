@@ -117,6 +117,8 @@ BASE_TEMPLATE = '''
         {% if 'username' in session %}
         <div class="nav">
             <a href="/">Home</a>
+            <a href="/news">News</a>
+            <a href="/directory">Directory</a>
             <a href="/profile">Profile</a>
             <a href="/resources">Resources</a>
             <a href="/templates">Templates</a>
@@ -338,6 +340,70 @@ def reports():
     {{% endblock %}}
     '''
     
+    return render_template_string(content)
+
+    '''
+    
+    return render_template_string(content)
+
+@app.route('/news')
+def news():
+    if 'username' not in session:
+        return redirect('/login')
+    
+    content = '''
+    {% extends "base" %}
+    {% block content %}
+        <h2>Company News</h2>
+        <div class="info-box">
+            <h4>Q4 Security Update</h4>
+            <p>Please ensure all workstations are updated to the latest security patch by Friday.</p>
+        </div>
+        <div class="info-box" style="background: #fff3e0; border-left-color: #ff9800;">
+            <h4>Office Move Postponed</h4>
+            <p>The move to the new downtown office has been postponed until further notice.</p>
+        </div>
+        <div class="info-box" style="background: #e3f2fd; border-left-color: #2196f3;">
+            <h4>New Employee Benefits</h4>
+            <p>Check the resources section for the updated 2026 benefits package.</p>
+        </div>
+    {% endblock %}
+    '''
+    return render_template_string(content)
+
+@app.route('/directory')
+def directory():
+    if 'username' not in session:
+        return redirect('/login')
+    
+    employees = [
+        {'name': 'Alice Johnson', 'dept': 'Engineering', 'email': 'alice.j@internal-server-1'},
+        {'name': 'Bob Smith', 'dept': 'Design', 'email': 'bob.s@internal-server-1'},
+        {'name': 'Charlie Davis', 'dept': 'Marketing', 'email': 'charlie.d@internal-server-1'},
+        {'name': 'Diana Ross', 'dept': 'HR', 'email': 'diana.r@internal-server-1'},
+        {'name': 'Edward Norton', 'dept': 'Management', 'email': 'edward.n@internal-server-1'}
+    ]
+    
+    rows = "".join([f"<tr><td>{e['name']}</td><td>{e['dept']}</td><td>{e['email']}</td></tr>" for e in employees])
+    
+    content = f'''
+    {{% extends "base" %}}
+    {{% block content %}}
+        <h2>Employee Directory</h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                    <th style="padding: 12px; text-align: left;">Name</th>
+                    <th style="padding: 12px; text-align: left;">Department</th>
+                    <th style="padding: 12px; text-align: left;">Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {rows}
+            </tbody>
+        </table>
+    {{% endblock %}}
+    '''
     return render_template_string(content)
 
 @app.route('/settings', methods=['GET', 'POST'])

@@ -119,6 +119,8 @@ var tmpl = `
             <a href="/processes">Processes</a>
             <a href="/disk">Disk Usage</a>
             <a href="/network">Network</a>
+            <a href="/traffic">Traffic Monitor</a>
+            <a href="/memory">Memory Usage</a>
             <a href="/services">Services</a>
             <a href="/diagnostics">Diagnostics</a>
             <a href="/hardware">Hardware</a>
@@ -426,7 +428,6 @@ func hardwareHandler(w http.ResponseWriter, r *http.Request) {
 	t := template.Must(template.New("page").Parse(tmpl))
 	t.Execute(w, PageData{Content: template.HTML(content)})
 }
-
 func envHandler(w http.ResponseWriter, r *http.Request) {
 	content := `
         <h2>🌍 Environment Variables</h2>
@@ -444,6 +445,40 @@ func envHandler(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, PageData{Content: template.HTML(content)})
 }
 
+func trafficHandler(w http.ResponseWriter, r *http.Request) {
+	content := `
+        <h2>📊 Traffic Monitor</h2>
+        <div class="info-box">
+            <p>Real-time network throughput and packet analysis (Simulation).</p>
+        </div>
+        <table>
+            <tr><th>Interface</th><th>Inbound</th><th>Outbound</th><th>Status</th></tr>
+            <tr><td>eth0</td><td>1.2 MB/s</td><td>450 KB/s</td><td style="color:#059669">ACTIVE</td></tr>
+            <tr><td>lo</td><td>12 KB/s</td><td>12 KB/s</td><td style="color:#059669">ACTIVE</td></tr>
+            <tr><td>br0</td><td>0 B/s</td><td>0 B/s</td><td style="color:#64748b">IDLE</td></tr>
+        </table>
+    `
+	t := template.Must(template.New("page").Parse(tmpl))
+	t.Execute(w, PageData{Content: template.HTML(content)})
+}
+
+func memoryHandler(w http.ResponseWriter, r *http.Request) {
+	content := `
+        <h2>🧠 Memory Usage Details</h2>
+        <div class="info-box">
+            <p>Breakdown of system memory allocation and swap usage.</p>
+        </div>
+        <table>
+            <tr><th>Type</th><th>Total</th><th>Used</th><th>Free</th></tr>
+            <tr><td>RAM</td><td>1024 MiB</td><td>342 MiB</td><td>682 MiB</td></tr>
+            <tr><td>Swap</td><td>512 MiB</td><td>0 MiB</td><td>512 MiB</td></tr>
+            <tr><td>Buffer/Cache</td><td>-</td><td>128 MiB</td><td>-</td></tr>
+        </table>
+    `
+	t := template.Must(template.New("page").Parse(tmpl))
+	t.Execute(w, PageData{Content: template.HTML(content)})
+}
+
 func main() {
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/processes", processesHandler)
@@ -453,6 +488,8 @@ func main() {
 	http.HandleFunc("/diagnostics", diagnosticsHandler)
 	http.HandleFunc("/hardware", hardwareHandler)
 	http.HandleFunc("/env", envHandler)
+	http.HandleFunc("/traffic", trafficHandler)
+	http.HandleFunc("/memory", memoryHandler)
 
 	fmt.Println("Server starting on :80")
 	http.ListenAndServe(":80", nil)

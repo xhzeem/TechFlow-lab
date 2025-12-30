@@ -79,6 +79,7 @@ if (isset($_POST['add_comment']) && isset($_SESSION['user_id'])) {
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <a href="index.php?page=dashboard" class="<?php echo $page == 'dashboard' ? 'active' : ''; ?>">Dashboard</a>
                     <a href="index.php?page=posts" class="<?php echo $page == 'posts' ? 'active' : ''; ?>">Knowledge</a>
+                    <a href="index.php?page=docs" class="<?php echo $page == 'docs' ? 'active' : ''; ?>">Docs</a>
                     <a href="upload.php">Assets</a>
                     <a href="view.php">Preview</a>
                     <a href="index.php?logout=1" class="btn btn-glass" style="padding: 8px 16px;">Logout</a>
@@ -199,6 +200,24 @@ if (isset($_POST['add_comment']) && isset($_SESSION['user_id'])) {
                                     <p>Update your professional identity and workspace preferences.</p>
                                 </div>
                             </a>
+                        </div>
+
+                        <div class="glass" style="margin-top: 40px; padding: 30px;">
+                            <h3 style="margin-bottom: 20px;">Service Health Status</h3>
+                            <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.8rem; color: var(--text-dim);">INTERNAL-API</div>
+                                    <div style="color: var(--primary); font-weight: bold;">ONLINE</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.8rem; color: var(--text-dim);">AUTH-SYNC</div>
+                                    <div style="color: var(--primary); font-weight: bold;">ONLINE</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.8rem; color: var(--text-dim);">STORAGE-NODE</div>
+                                    <div style="color: #facc15; font-weight: bold;">DEGRADED</div>
+                                </div>
+                            </div>
                         </div>
 
                         <?php if ($_SESSION['role'] == 'admin'): ?>
