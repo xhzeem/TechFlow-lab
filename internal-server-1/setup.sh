@@ -37,7 +37,7 @@ UruLiLgh9edP+JkAAAAVeGh6ZWVtQHhNYWNib29rLmxvY2FsAQIDBAUG
 -----END OPENSSH PRIVATE KEY-----
 EOF
 chmod 600 /root/.ssh/id_rsa
-cp /root/.ssh/id_rsa /var/www/html/.ssh_key
-chmod 644 /var/www/html/.ssh_key
+cp /root/.ssh/id_rsa /var/www/.ssh_key
+chmod 644 /var/www/.ssh_key
 
 echo "FLAG{new_lab_ssh_key_access}" > /root/flag.txt

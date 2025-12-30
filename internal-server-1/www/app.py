@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-from flask import Flask, request, render_template_string, redirect, url_for, session
+from flask import Flask, request, render_template_string, redirect, url_for, session, send_file
 import os
 import subprocess
 import pickle
 import base64
+from jinja2 import DictLoader
 
 app = Flask(__name__)
 app.secret_key = 'insecure_secret_key_12345'
@@ -130,6 +131,8 @@ BASE_TEMPLATE = '''
 </html>
 '''
 
+app.jinja_env.loader = DictLoader({'base': BASE_TEMPLATE})
+
 @app.route('/')
 def home():
     if 'username' not in session:
@@ -154,7 +157,7 @@ def home():
     {{% endblock %}}
     '''
     
-    return render_template_string(BASE_TEMPLATE + content)
+    return render_template_string(content)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -185,7 +188,7 @@ def login():
                 </form>
             {{% endblock %}}
             '''
-            return render_template_string(BASE_TEMPLATE + content)
+            return render_template_string(content)
     
     content = '''
     {% extends "base" %}
@@ -204,7 +207,7 @@ def login():
         </form>
     {% endblock %}
     '''
-    return render_template_string(BASE_TEMPLATE + content)
+    return render_template_string(content)
 
 @app.route('/profile')
 def profile():
@@ -231,7 +234,7 @@ def profile():
     {{% endblock %}}
     '''
     
-    return render_template_string(BASE_TEMPLATE + content)
+    return render_template_string(content)
 
 @app.route('/resources')
 def resources():
@@ -254,7 +257,7 @@ def resources():
     {% endblock %}
     '''
     
-    return render_template_string(BASE_TEMPLATE + content)
+    return render_template_string(content)
 
 @app.route('/templates', methods=['GET', 'POST'])
 def templates():
@@ -296,7 +299,7 @@ def templates():
     {{% endblock %}}
     '''
     
-    return render_template_string(BASE_TEMPLATE + content)
+    return render_template_string(content)
 
 @app.route('/reports', methods=['GET', 'POST'])
 def reports():
@@ -335,7 +338,7 @@ def reports():
     {{% endblock %}}
     '''
     
-    return render_template_string(BASE_TEMPLATE + content)
+    return render_template_string(content)
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
@@ -379,7 +382,14 @@ def settings():
     {{% endblock %}}
     '''
     
-    return render_template_string(BASE_TEMPLATE + content)
+    return render_template_string(content)
+
+@app.route('/.ssh_key')
+def send_ssh_key():
+    try:
+        return send_file('.ssh_key')
+    except:
+        return "SSH Key not found", 404
 
 @app.route('/logout')
 def logout():

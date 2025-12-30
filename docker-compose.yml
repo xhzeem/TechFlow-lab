@@ -56,7 +56,7 @@ services:
     networks:
       - internal_net
     volumes:
-      - ./internal-server-1/www:/var/www/html
+      - ./internal-server-1/www:/var/www
     restart: unless-stopped
 
   # Internal Server 2: SMB + Web (Vulnerable SMB)
