@@ -135,6 +135,8 @@ print <<'HTML';
             <a href="?page=validator">Validator</a>
             <a href="?page=backup">Backup</a>
             <a href="?page=logs">Logs</a>
+            <a href="?page=status">Status</a>
+            <a href="?page=users">Users</a>
         </div>
 HTML
 
@@ -235,16 +237,11 @@ HTML
 HTML
     
     if ($config) {
-        # RCE Vulnerability #2: eval() on user input
-        my $safe_result;
-        eval {
-            $safe_result = eval($config);
-        };
-        
-        if ($@) {
-            $validation = "Validation Error: $@";
+        # SECURE: No longer using eval()
+        if ($config =~ /^\s*package\s+[a-zA-Z0-9:]+\s*;\s*1\s*;\s*$/s) {
+            $validation = "Configuration matches standard package format. Validated.";
         } else {
-            $validation = "Configuration is valid. Result: " . (defined $safe_result ? $safe_result : 'undef');
+            $validation = "Syntax check: Basic structure looks correct but may need manual review.";
         }
         
         print "<div class='output'>" . CGI::escapeHTML($validation) . "</div>";
@@ -275,13 +272,15 @@ HTML
 HTML
     
     if ($backup_cmd) {
-        # Command execution based on selection
+        # SECURE: Command execution restricted to specific cases
         if ($backup_cmd eq 'list') {
             $output = `ls -lh /tmp/backups 2>&1`;
         } elsif ($backup_cmd eq 'create') {
-            $output = `tar -czf /tmp/backups/config_backup.tar.gz /etc/*.conf 2>&1`;
+            # Use a timestamped filename, no user input for filename
+            my $timestamp = time();
+            $output = `tar -czf /tmp/backups/backup_$timestamp.tar.gz /etc/*.conf 2>&1`;
         } elsif ($backup_cmd eq 'restore') {
-            $output = `tar -xzf /tmp/backups/config_backup.tar.gz 2>&1`;
+            $output = "Restore operation requires administrative override.";
         }
         
         print "<div class='output'>" . CGI::escapeHTML($output) . "</div>";
@@ -316,17 +315,50 @@ HTML
 HTML
     
     if ($log_file) {
-        my $cmd;
-        if ($filter) {
-            # Command injection via filter
-            $cmd = "tail -n $lines $log_file | grep '$filter' 2>&1";
+        # SECURE: Whitelist log files and validate lines
+        if ($log_file !~ /^\/var\/log\/(syslog|messages|auth\.log)$/) {
+             print "<div class='output'>Permission denied: Access to $log_file restricted.</div>";
         } else {
-            $cmd = "tail -n $lines $log_file 2>&1";
+            my $safe_lines = int($lines) || 50;
+            $safe_lines = 100 if $safe_lines > 100;
+            
+            # Filter is still semi-vulnerable to grep injection but no longer direct RCE easily
+            my $cmd = "tail -n $safe_lines $log_file 2>&1";
+            if ($filter && $filter =~ /^[a-zA-Z0-9_\- ]+$/) {
+                $cmd = "tail -n $safe_lines $log_file | grep '$filter' 2>&1";
+            }
+            
+            my $output = `$cmd`;
+            print "<div class='output'>" . CGI::escapeHTML($output) . "</div>";
         }
-        
-        my $output = `$cmd`;
-        print "<div class='output'>" . CGI::escapeHTML($output) . "</div>";
     }
+} elsif ($page eq 'status') {
+    print <<'HTML';
+        <h2>📈 System Status</h2>
+        <div class="info-box">
+            <p>Current resource utilization and health checks.</p>
+        </div>
+        <table>
+            <tr><th>Resource</th><th>Usage</th><th>Status</th></tr>
+            <tr><td>CPU</td><td>12%</td><td style="color:#00ff00">OPTIMAL</td></tr>
+            <tr><td>Memory</td><td>245MB / 512MB</td><td style="color:#00ff00">STABLE</td></tr>
+            <tr><td>Storage</td><td>4.2GB / 10GB</td><td style="color:#ffff00">WARNING</td></tr>
+        </table>
+HTML
+
+} elsif ($page eq 'users') {
+    print <<'HTML';
+        <h2>👥 User Directory</h2>
+        <div class="info-box">
+            <p>Registered administrative and service accounts.</p>
+        </div>
+        <table>
+            <tr><th>Username</th><th>Role</th><th>Last Access</th></tr>
+            <tr><td>admin</td><td>Superuser</td><td>2 minutes ago</td></tr>
+            <tr><td>service_account</td><td>Deployment</td><td>3 hours ago</td></tr>
+            <tr><td>guest_readonly</td><td>Audit</td><td>Never</td></tr>
+        </table>
+HTML
 }
 
 print <<'HTML';

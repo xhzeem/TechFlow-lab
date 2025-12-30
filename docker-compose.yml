@@ -88,6 +88,14 @@ services:
       - internal_net
     restart: unless-stopped
 
+  # Internal Server 5: Directory Traversal to SSH
+  internal-server-5:
+    build: ./internal-server-5
+    container_name: internal-traversal-ssh
+    networks:
+      - internal_net
+    restart: unless-stopped
+
 networks:
   public_net:
     driver: bridge
