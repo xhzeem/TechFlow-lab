@@ -13,16 +13,23 @@ if (isset($_POST['upload'])) {
     $target_dir = "uploads/";
     
     if (!file_exists($target_dir)) {
-        mkdir($target_dir, 0777, true);
+        if (!mkdir($target_dir, 0777, true)) {
+            $error = "Failed to create storage directory. Please check filesystem permissions.";
+        }
     }
     
-    $target_file = $target_dir . basename($_FILES["file"]["name"]);
-    
-    // Core logic remains the same (Vulnerable to unrestricted upload)
-    if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
-        $message = "Asset synchronized successfully. External reference: <a href='$target_file' style='color: var(--primary);'>$target_file</a>";
-    } else {
-        $error = "Synchronization failed. Please verify internal storage availability.";
+    if (empty($error)) {
+        if (!is_writable($target_dir)) {
+            $error = "Storage directory is not writable. Please check filesystem permissions.";
+        } else {
+            $target_file = $target_dir . basename($_FILES["file"]["name"]);
+            
+            if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
+                $message = "Asset synchronized successfully. External reference: <a href='$target_file' style='color: var(--primary);'>$target_file</a>";
+            } else {
+                $error = "Synchronization failed. Please verify internal storage availability.";
+            }
+        }
     }
 }
 ?>

@@ -27,11 +27,13 @@ echo "🛑 Stopping existing containers..."
 docker compose down 2>/dev/null
 
 echo ""
-echo "🚀 Starting the lab environment..."
-echo "This may take a few minutes on first run..."
-echo ""
+# Pre-create uploads directory and set permissions
+echo "📁 Setting up asset repository permissions..."
+mkdir -p web-server/www/uploads
+chmod 777 web-server/www/uploads
 
 # Build and start containers
+echo "🚀 Starting the lab environment..."
 docker compose up -d --build
 
 echo ""
