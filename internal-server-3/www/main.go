@@ -17,77 +17,97 @@ var tmpl = `
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 40px 20px;
+            color: #1e293b;
         }
         .container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 40px;
+            padding: 50px;
         }
-        h1 { color: #fa709a; margin-bottom: 20px; }
-        h2 { color: #333; margin-bottom: 15px; }
+        h1 { color: #0f172a; margin-bottom: 30px; font-weight: 800; font-size: 2.5rem; letter-spacing: -0.025em; }
+        h2 { color: #334155; margin-bottom: 20px; font-weight: 700; }
         .nav {
             display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e9ecef;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
             flex-wrap: wrap;
         }
         .nav a {
             padding: 10px 20px;
-            background: #fa709a;
-            color: white;
+            background: white;
+            color: #64748b;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(0,0,0,0.05);
         }
-        .nav a:hover { background: #fee140; color: #333; }
+        .nav a:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); color: #0f172a; border-color: #cbd5e1; }
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #475569;
+            font-size: 14px;
         }
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            font-size: 15px;
+            transition: border-color 0.2s ease;
         }
+        .form-group input:focus { outline: none; border-color: #94a3b8; }
         .btn {
-            padding: 12px 30px;
-            background: #fa709a;
+            padding: 12px 32px;
+            background: #0f172a;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 12px;
             cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
         }
-        .btn:hover { background: #fee140; color: #333; }
+        .btn:hover { background: #1e293b; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .output {
-            background: #1e1e1e;
-            color: #00ff00;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            margin-top: 20px;
+            background: #f8fafc;
+            color: #334155;
+            padding: 25px;
+            border-radius: 16px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            margin-top: 30px;
             white-space: pre-wrap;
-            max-height: 400px;
+            max-height: 500px;
             overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+            line-height: 1.6;
         }
         .info-box {
-            background: #fff0f3;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            border-left: 4px solid #fa709a;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 20px;
+            border-radius: 16px;
+            margin: 25px 0;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            color: #64748b;
         }
     </style>
 </head>

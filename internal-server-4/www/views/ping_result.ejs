@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ping Result - Internal Admin Portal</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+        }
+
+        .navbar {
+            background: #1a73e8;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+        }
+
+        .tool-box {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .terminal {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            min-height: 200px;
+            white-space: pre-wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #1a73e8;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="brand">🚀 Admin Portal</div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="tool-box">
+            <h1>🛠️ Ping Connectivity Test</h1>
+            <p>Test connectivity to internal or external hosts.</p>
+            <form action="/tools/ping" method="POST" style="margin-bottom: 20px;">
+                <input type="text" name="host" placeholder="127.0.0.1"
+                    style="width: 70%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                <button type="submit"
+                    style="padding: 10px 20px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer;">Run
+                    Ping</button>
+            </form>
+
+            <% if (output) { %>
+                <div class="terminal">
+                    <%= output %>
+                </div>
+                <% } %>
+                    <a href="/dashboard" class="btn">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+
+</html>

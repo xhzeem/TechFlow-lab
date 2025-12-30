@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Email Preview - Internal Admin Portal</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+        }
+
+        .navbar {
+            background: #1a73e8;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+        }
+
+        .tool-box {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            height: 150px;
+            font-family: monospace;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .result-box {
+            margin-top: 30px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .result-header {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+            font-weight: 600;
+        }
+
+        .result-content {
+            padding: 20px;
+            min-height: 100px;
+            background: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="brand">🚀 Admin Portal</div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="tool-box">
+            <h1>📧 Email Template Preview</h1>
+            <p>Design your email using EJS tags. Available variables: <code>user</code></p>
+            <form action="/tools/email-preview" method="POST">
+                <div class="form-group">
+                    <textarea name="template" placeholder="Hello <%= user.username %>!"><%= template %></textarea>
+                </div>
+                <button type="submit" class="btn">Generate Preview</button>
+            </form>
+
+            <% if (result !==null) { %>
+                <div class="result-box">
+                    <div class="result-header">Preview Result:</div>
+                    <div class="result-content"><%- result %></div>
+                </div>
+                <% } %>
+        </div>
+    </div>
+</body>
+
+</html>

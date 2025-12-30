@@ -80,6 +80,14 @@ services:
       MYSQL_ROOT_PASSWORD: toor
     restart: unless-stopped
 
+  # Internal Server 4: Node.js + Express (Vulnerable App)
+  internal-server-4:
+    build: ./internal-server-4
+    container_name: internal-node-app
+    networks:
+      - internal_net
+    restart: unless-stopped
+
 networks:
   public_net:
     driver: bridge

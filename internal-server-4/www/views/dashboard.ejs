@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Internal Admin Portal</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+        }
+
+        .navbar {
+            background: #1a73e8;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h3 {
+            color: #1a73e8;
+            margin-top: 0;
+        }
+
+        .card p {
+            color: #5f6368;
+            line-height: 1.5;
+        }
+
+        .btn-outline {
+            display: inline-block;
+            padding: 8px 16px;
+            border: 1px solid #1a73e8;
+            color: #1a73e8;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: #1a73e8;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="brand">🚀 Admin Portal</div>
+        <div class="nav-links">
+            <span>Welcome, <%= user.username %></span>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/profile/<%= user.id %>">Profile</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="welcome">
+            <h1>Welcome to the Internal Admin Suite</h1>
+            <p>Select a tool below to manage internal resources.</p>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <h3>Network Diagnostics</h3>
+                <p>Run network connectivity tests from the internal network.</p>
+                <a href="/tools/ping" class="btn-outline">Open Tool</a>
+            </div>
+            <div class="card">
+                <h3>System Logs</h3>
+                <p>Monitor system activity and application logs.</p>
+                <a href="/tools/logs" class="btn-outline">View Logs</a>
+            </div>
+            <div class="card">
+                <h3>Asset Fetcher</h3>
+                <p>Import external assets or check internal service status.</p>
+                <a href="/tools/fetch" class="btn-outline">Open Fetcher</a>
+            </div>
+            <div class="card">
+                <h3>Email Template Preview</h3>
+                <p>Test and preview custom email templates with EJS.</p>
+                <a href="/tools/email-preview" class="btn-outline">Open Previewer</a>
+            </div>
+            <div class="card">
+                <h3>Internal Notes</h3>
+                <p>Collaborative notes for the admin team.</p>
+                <a href="/notes" class="btn-outline">View Notes</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -202,7 +202,6 @@ def login():
             </div>
             <button type="submit" class="btn">Login</button>
         </form>
-        <p style="margin-top: 15px; color: #666;">Default credentials: admin / admin123</p>
     {% endblock %}
     '''
     return render_template_string(BASE_TEMPLATE + content)

@@ -21,37 +21,50 @@ print <<'HTML';
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #0c0c0c;
+            color: #00ff00;
             min-height: 100vh;
             padding: 20px;
         }
         .container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            background: #141414;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
             max-width: 1000px;
             margin: 0 auto;
             padding: 40px;
+            position: relative;
         }
-        h1 { color: #f5576c; margin-bottom: 20px; }
-        h2 { color: #333; margin-bottom: 15px; }
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), repeating-linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+        h1 { color: #00ff00; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 5px #00ff00; }
+        h2 { color: #00cc00; margin-bottom: 15px; border-bottom: 1px dashed #00ff00; padding-bottom: 5px; }
         .nav {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 2px solid #e9ecef;
+            border-bottom: 1px solid #00ff00;
             flex-wrap: wrap;
         }
         .nav a {
-            padding: 10px 20px;
-            background: #f5576c;
-            color: white;
+            padding: 8px 15px;
+            border: 1px solid #00ff00;
+            color: #00ff00;
             text-decoration: none;
-            border-radius: 5px;
+            text-transform: uppercase;
+            font-size: 14px;
         }
-        .nav a:hover { background: #f093fb; }
+        .nav a:hover { background: #00ff00; color: #000; box-shadow: 0 0 10px #00ff00; }
         .form-group {
             margin-bottom: 20px;
         }
@@ -59,27 +72,33 @@ print <<'HTML';
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            color: #00cc00;
         }
         .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
+            background: #000;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: inherit;
         }
         .btn {
             padding: 12px 30px;
-            background: #f5576c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .btn:hover { background: #f093fb; }
-        .output {
-            background: #1e1e1e;
+            background: transparent;
             color: #00ff00;
-            padding: 15px;
-            border-radius: 5px;
+            border: 1px solid #00ff00;
+            border-radius: 0;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-family: inherit;
+        }
+        .btn:hover { background: #00ff00; color: #000; box-shadow: 0 0 10px #00ff00; }
+        .output {
+            background: #000;
+            color: #00ff00;
+            padding: 20px;
+            border: 1px dashed #00ff00;
             font-family: 'Courier New', monospace;
             margin-top: 20px;
             white-space: pre-wrap;
@@ -87,23 +106,23 @@ print <<'HTML';
             overflow-y: auto;
         }
         .info-box {
-            background: #ffe0e6;
+            background: rgba(0, 255, 0, 0.05);
             padding: 15px;
-            border-radius: 5px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
             margin: 20px 0;
-            border-left: 4px solid #f5576c;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
+            border: 1px solid #00ff00;
         }
         table th, table td {
             padding: 10px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border: 1px solid #00ff00;
         }
-        table th { background: #f8f9fa; }
+        table th { background: rgba(0, 255, 0, 0.1); color: #00ff00; text-transform: uppercase; }
     </style>
 </head>
 <body>
