@@ -7,6 +7,7 @@ RUN echo 'Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries && \
     wget \
     curl \
     netcat-traditional \
+    ncat \
     nmap \
     iproute2 \
     iputils-ping \

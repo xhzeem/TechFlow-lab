@@ -11,6 +11,7 @@ RUN echo 'Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries && \
     proftpd-basic \
     default-mysql-server \
     netcat-traditional \
+    ncat \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Tomcat 8.5.50 (vulnerable to CVE-2020-1938 Ghostcat)

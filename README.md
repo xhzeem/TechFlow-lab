@@ -154,6 +154,7 @@ Available tools:
 - **ip** - Network configuration
 - **netcat** - Network utility
 - **curl/wget** - HTTP clients
+- **python3** - Python interpreter for scripting and reverse shells
 
 ## 🔧 Useful Commands
 
@@ -255,6 +256,16 @@ ports:
 
 ### Can't Access Internal Network
 Make sure you've compromised the web server first and are using it as a pivot point.
+
+### Permission Denied on File Upload
+If you get "Permission denied" errors when uploading files:
+1. Ensure you used `./start-lab.sh` which pre-configures permissions.
+2. Manually set permissions on the host:
+   ```bash
+   mkdir -p web-server/www/uploads
+   chmod 777 web-server/www/uploads
+   ```
+3. Restart the containers: `docker-compose restart web-server`
 
 ## 📚 Additional Resources
 

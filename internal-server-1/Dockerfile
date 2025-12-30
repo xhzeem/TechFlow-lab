@@ -12,6 +12,7 @@ RUN echo 'Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries && \
     python3-pip \
     memcached \
     sudo \
+    ncat \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python Flask and dependencies
